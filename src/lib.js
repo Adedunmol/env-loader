@@ -4,16 +4,22 @@ const path = require("path");
 
 const config = async (envPath) => {
     const rootDir = getRootDir();
+    let envFilePath;
 
-    if (!rootDir) return;
+    if (envPath) {
+        envFilePath = envPath;
+    } else {
+        envFilePath = path.join(rootDir, ".env");
+    }
 
-    const envFilePath = path.join(rootDir, ".env");
-
-    if (!fsSync.existsSync(envFilePath) || !envPath) return;
+    if (!fsSync.existsSync(envFilePath) || !fsSync.existsSync(envPath)) return;
 
     const fileHandle = await fs.open(envFilePath);
 
-    console.log(envFilePath);
+    for await (const line of fileHandle.readLines()) {
+        console.log(line);
+    }
+
 }
 
 const getRootDir = () => {
@@ -26,4 +32,4 @@ const getRootDir = () => {
     return currentDir
 }
 
-config();
+config("../.env_new");
